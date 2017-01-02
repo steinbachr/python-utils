@@ -1,0 +1,8 @@
+# venv
+venv
+
+# compiled
+.pyc
+
+# secret
+gapi-service-creds.json
