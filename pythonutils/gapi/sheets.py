@@ -13,7 +13,7 @@ def __get_handle():
     """
     scope = ['https://spreadsheets.google.com/feeds']
 
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(os.path.abspath('gapi/gapi-service-creds.json'), scope)
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(os.environ['GAPI_SERVICE_CREDS'], scope)
 
     return gspread.authorize(credentials)
 
@@ -39,7 +39,7 @@ def get_workbook(wbook_name, gc=None):
 def get_worksheet(wbook_name, sheet_name=None, sheet_ix=None, gc=None):
     workbook = get_workbook(wbook_name, gc=gc)
 
-    if sheet_ix:
+    if sheet_ix is not None:
         return workbook.get_worksheet(sheet_ix)
     elif sheet_name:
         return workbook.worksheet(sheet_name)

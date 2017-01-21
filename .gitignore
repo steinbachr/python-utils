@@ -6,3 +6,4 @@ venv
 
 # secret
 gapi-service-creds.json
+.env
