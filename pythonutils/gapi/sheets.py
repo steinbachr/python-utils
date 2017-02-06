@@ -5,7 +5,9 @@ import gspread
 import pdb
 import os
 from oauth2client.service_account import ServiceAccountCredentials
+from functools import partial
 
+# TODO: We should really encapsulate all this functionality in an object, but that will be a breaking change
 
 def __get_handle():
     """ authorize a Google Sheets handler and return that handle
@@ -64,3 +66,33 @@ def get_cell_value(worksheet, col=None, row=None):
     """
     cell = worksheet.cell(row, col)
     return cell.value
+
+
+def write_cell_value(worksheet, cell_label=None, col=None, row=None, value=None):
+    if cell_label and (col and row):
+        raise ValueError("only one of cell_label OR col + row should be passed")
+
+    if cell_label:
+        worksheet.update_acell(cell_label, value)
+    else:
+        worksheet.update_cell(row, col, value)
+
+
+def write_row(worksheet, row_data, offset=0):
+    [write_cell_value(worksheet, col=i + 1, row=offset + 1, value=v) for i, v in enumerate(row_data)]
+
+
+def export(worksheet, output_path=None, format='pdf'):
+    if not output_path.endswith(format):
+        raise ValueError("the output_path file type should be the same as the file type of the worksheet export (format)")
+
+    f = open(output_path, 'wb')
+
+    f.write(worksheet.export(format=format))
+    f.close()
+
+    return output_path
+
+
+def clear(worksheet):
+    worksheet.clear()
